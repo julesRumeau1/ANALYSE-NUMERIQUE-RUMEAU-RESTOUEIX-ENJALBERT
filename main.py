@@ -72,7 +72,7 @@ def spline_cubic_interpolator(xi, yi, bc_type='natural'):
 
 
 
-# Trace la trajectoire réelle et les interpolations
+# Trace la trajectoire réelle et les interpolations avec styles améliorés pour lisibilité
 def plot_trajectories(x_dense, y_dense, lag, newt, spline, x_sample, y_sample):
     """
     x_dense, y_dense : trajectoire réelle
@@ -80,16 +80,27 @@ def plot_trajectories(x_dense, y_dense, lag, newt, spline, x_sample, y_sample):
     x_sample, y_sample : points d'échantillon
     """
 
-    plt.figure(figsize=(8,5))
-    plt.plot(x_dense, y_dense, 'k', label='Trajectoire réelle')
-    plt.plot(lag[0], lag[1], 'r--', label='Lagrange')
-    plt.plot(newt[0], newt[1], 'g-.', label='Newton')
-    plt.plot(spline[0], spline[1], 'b', label='Spline cubique')
-    plt.scatter(x_sample, y_sample, c='k', s=10, label='Points échantillons')
+    import matplotlib.pyplot as plt
+
+    plt.figure(figsize=(9,6))
+
+    # Trajectoire réelle
+    plt.plot(x_dense, y_dense, 'k-', linewidth=2, alpha=0.5, label='Trajectoire réelle')
+
+    # Interpolations
+    plt.plot(lag[0], lag[1], 'r--', linewidth=1.5, label='Lagrange')
+    plt.plot(newt[0], newt[1], 'g-.', linewidth=1.5, label='Newton')
+    plt.plot(spline[0], spline[1], 'b-', linewidth=1, alpha=0.7, label='Spline cubique')
+
+    # Points échantillons
+    plt.scatter(x_sample, y_sample, c='orange', s=50, edgecolor='k', zorder=5, label='Points échantillons')
+
     plt.xlabel('x')
     plt.ylabel('y')
     plt.title('Trajectoire réelle vs interpolations')
     plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
     plt.show()
 
 
@@ -164,9 +175,9 @@ if __name__ == "__main__":
 
     # --- Générer la trajectoire dense (ground truth) ---
     t_dense, x_dense, y_dense = generate_ground_truth(n=1000)
-
+    
     # --- Échantillonner quelques points pour l'interpolation ---
-    n_sample = 20  # nombre de points échantillon
+    n_sample = int(input("Nombre de points (entre 50 et 200): "))  # nombre de points échantillon
     indices = np.linspace(0, len(t_dense)-1, n_sample, dtype=int)
     t_sample = t_dense[indices]
     x_sample = x_dense[indices]
