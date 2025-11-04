@@ -1,0 +1,18 @@
+# === Librairies principales ===
+streamlit>=1.32.0
+numpy>=1.24.0
+matplotlib>=3.8.0
+plotly>=5.18.0
+requests>=2.31.0
+sympy>=1.12
+
+# === Cartographie / géométrie ===
+folium>=0.15.0
+streamlit-folium>=0.15.0
+pyproj>=3.6.0
+
+# === Interpolation / calcul scientifique ===
+scipy>=1.12.0
+
+# === (Optionnel) si tu veux générer ton module math_details séparément ===
+# pas de dépendances additionnelles ici, juste ton propre fichier .py local

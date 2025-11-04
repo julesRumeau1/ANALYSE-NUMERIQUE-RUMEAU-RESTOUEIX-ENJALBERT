@@ -23,10 +23,20 @@ Le jeu de données est composé de **50 à 200 points GPS**, éventuellement per
 
 ---
 
+
+## 🚀 Lancer le projet
+
+- Installer toutes les dépendances nécessaire pour faire fonctionner le projet via le fichier requirements.txt : 
+  - `pip install -r requirements.txt`
+- Lancer le projet à la racine grâce à streamlit
+  - `python -m streamlit run app.py`
+
+---
+
 ## 📈 Données
 
 - Format : $(t_i, x_i, y_i)$
-- Taille : entre **50 et 200 points**
+- Taille : entre **5 et 200 points**
 - Possibilité d’ajouter un **bruit gaussien léger** sur les données
 
 ---
@@ -78,11 +88,11 @@ Exemples :
 
 ## ✅ À faire
 
-- [ ] Générer ou importer les données GPS
-- [ ] Implémenter les méthodes d’interpolation
-- [ ] Implémenter les fonctions de calcul d’erreur
-- [ ] Tracer les courbes
-- [ ] Créer le tableau comparatif des erreurs
+- [x] Générer ou importer les données GPS
+- [x] Implémenter les méthodes d’interpolation
+- [x] Implémenter les fonctions de calcul d’erreur
+- [x] Tracer les courbes
+- [x] Créer le tableau comparatif des erreurs
 - [ ] (Optionnel) Ajouter du bruit gaussien
 - [ ] (Optionnel) Implémenter les extensions
 
