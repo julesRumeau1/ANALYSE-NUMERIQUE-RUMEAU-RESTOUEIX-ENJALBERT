@@ -4,7 +4,7 @@
 
 Ce projet a pour objectif la **reconstruction d'une trajectoire 2D GPS** à partir de points échantillonnés. Concrètement, on cherche à retrouver une fonction continue $(x(t), y(t))$ à partir d’un ensemble discret de points $(t_i, x_i, y_i)$. Le tout sera évalué à l’aide de différentes **métriques d’erreur** afin d’estimer la qualité de la reconstruction.
 
-Le jeu de données est composé de **50 à 200 points GPS**, éventuellement perturbés par un **bruit gaussien léger**.
+Le jeu de données est composé de **5 à 200 points GPS**.
 
 ---
 
