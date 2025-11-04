@@ -170,29 +170,120 @@ def compute_errors(x_dense, y_dense, lag, newt, spline):
     return errors, errors_rmse
 
 
+def plot_error_evolution(errors_vs_n):
+    """
+    Trace l'évolution de la MAE et de la RMSE en fonction du nombre de points échantillonnés,
+    pour les 3 méthodes d'interpolation.
+    """
+    n = errors_vs_n["n_points"]
+    
+    plt.figure(figsize=(10,5))
+    
+    # MAE
+    plt.subplot(1, 2, 1)
+    plt.plot(n, errors_vs_n["Lagrange_MAE"], 'r--', label="Lagrange")
+    plt.plot(n, errors_vs_n["Newton_MAE"], 'g-.', label="Newton")
+    plt.plot(n, errors_vs_n["Spline_MAE"], 'b-', label="Spline cubique")
+    plt.xlabel("Nombre de points d'échantillonnage")
+    plt.ylabel("MAE")
+    plt.title("Évolution de la MAE")
+    plt.legend()
+    plt.grid(True)
+
+    # RMSE
+    plt.subplot(1, 2, 2)
+    plt.plot(n, errors_vs_n["Lagrange_RMSE"], 'r--', label="Lagrange")
+    plt.plot(n, errors_vs_n["Newton_RMSE"], 'g-.', label="Newton")
+    plt.plot(n, errors_vs_n["Spline_RMSE"], 'b-', label="Spline cubique")
+    plt.xlabel("Nombre de points d'échantillonnage")
+    plt.ylabel("RMSE")
+    plt.title("Évolution de la RMSE")
+    plt.legend()
+    plt.grid(True)
+
+    plt.tight_layout()
+    plt.show()
+
+
+
+def compute_errors_vs_samples(t_dense, x_dense, y_dense, min_points, max_points):
+    """
+    Calcule les erreurs MAE et RMSE pour un nombre d'échantillons
+    variant entre min_points et max_points.
+    """
+    errors_vs_n = {
+        "n_points": [],
+        "Lagrange_MAE": [],
+        "Lagrange_RMSE": [],
+        "Newton_MAE": [],
+        "Newton_RMSE": [],
+        "Spline_MAE": [],
+        "Spline_RMSE": []
+    }
+    
+    print(f"Calcul des erreurs pour des tailles d'échantillons entre {min_points} et {max_points}...\n")
+    
+    for n_sample in range(min_points, max_points + 1):
+        indices = np.linspace(0, len(t_dense)-1, n_sample, dtype=int)
+        t_sample = t_dense[indices]
+        x_sample = x_dense[indices]
+        y_sample = y_dense[indices]
+        
+        # interpolation
+        lag, newt, spline = compute_interpolations(t_sample, x_sample, y_sample, t_dense)
+        
+        # erreurs
+        errors, errors_rmse = compute_errors(x_dense, y_dense, lag, newt, spline)
+        
+        # stockage
+        errors_vs_n["n_points"].append(n_sample)
+        errors_vs_n["Lagrange_MAE"].append(errors["Lagrange"])
+        errors_vs_n["Lagrange_RMSE"].append(errors_rmse["Lagrange"])
+        errors_vs_n["Newton_MAE"].append(errors["Newton"])
+        errors_vs_n["Newton_RMSE"].append(errors_rmse["Newton"])
+        errors_vs_n["Spline_MAE"].append(errors["Spline"])
+        errors_vs_n["Spline_RMSE"].append(errors_rmse["Spline"])
+        
+        print(f"{n_sample} points : OK")
+    
+    return errors_vs_n
+
+
 if __name__ == "__main__":
     import numpy as np
 
     # --- Générer la trajectoire dense (ground truth) ---
     t_dense, x_dense, y_dense = generate_ground_truth(n=1000)
+   
+    print("\n=== MENU INTERPOLATION GPS ===")
+    print("1. Interpolation avec affichage pour un seul échantillonnage")
+    print("2. Analyse de l'évolution des erreurs (MAE/RMSE) selon le nombre de points")
     
-    # --- Échantillonner quelques points pour l'interpolation ---
-    n_sample = int(input("Nombre de points (entre 50 et 200): "))  # nombre de points échantillon
-    indices = np.linspace(0, len(t_dense)-1, n_sample, dtype=int)
-    t_sample = t_dense[indices]
-    x_sample = x_dense[indices]
-    y_sample = y_dense[indices]
+    choice = input("\nQuel mode veux-tu utiliser ? (1 / 2) : ").strip()
+    
+    if choice == "1":
+        # --- Mode normal
+        n_sample = int(input("Nombre de points (entre 50 et 200): "))
+        indices = np.linspace(0, len(t_dense)-1, n_sample, dtype=int)
+        t_sample = t_dense[indices]
+        x_sample = x_dense[indices]
+        y_sample = y_dense[indices]
 
-    # --- Calculer les interpolations ---
-    lag, newt, spline = compute_interpolations(t_sample, x_sample, y_sample, t_dense)
+        lag, newt, spline = compute_interpolations(t_sample, x_sample, y_sample, t_dense)
+        plot_trajectories(x_dense, y_dense, lag, newt, spline, x_sample, y_sample)
 
-    # --- Tracer les trajectoires ---
-    plot_trajectories(x_dense, y_dense, lag, newt, spline, x_sample, y_sample)
+        errors, errors_rmse = compute_errors(x_dense, y_dense, lag, newt, spline)
+        print("\nMAE :", errors)
+        print("RMSE :", errors_rmse)
+        plot_errors(errors, errors_rmse)
+    
+    elif choice == "2":
+        # --- Mode analyse
+        min_n = int(input("Nombre minimum de points (>=10) : "))
+        max_n = int(input("Nombre maximum de points (<=200) : "))
 
-    # --- Calculer les erreurs ---
-    errors, errors_rmse = compute_errors(x_dense, y_dense, lag, newt, spline)
-
-    # --- Afficher les erreurs ---
-    print("MAE :", errors)
-    print("RMSE :", errors_rmse)
-    plot_errors(errors, errors_rmse)
+        errors_vs_n = compute_errors_vs_samples(t_dense, x_dense, y_dense, min_n, max_n)
+        plot_error_evolution(errors_vs_n)
+    
+    else:
+        print("\n⚠️ Choix non valide. Veuillez relancer le programme.")
