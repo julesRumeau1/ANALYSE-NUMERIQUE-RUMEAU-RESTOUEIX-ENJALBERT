@@ -67,7 +67,7 @@ st.set_page_config(page_title="Interpolation polynomiale 2D", layout="wide")
 st.title("Interpolation polynomiale 2D — Lagrange • Newton • Spline")
 
 mode = st.sidebar.radio("Mode", ["Courbe synthétique", "Trajet réel (carte/OSRM)"])
-n_sample = st.sidebar.slider("Nombre de points (échantillonnage des données)", 5, 200, 100, step=5)
+n_sample = st.sidebar.slider("Nombre de points (échantillonnage des données)", 5, 200, 50, step=5)
 stabilize = st.sidebar.checkbox("Stabiliser Lagrange/Newton (normaliser t)", value=True)
 
 
